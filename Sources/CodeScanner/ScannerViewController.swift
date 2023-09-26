@@ -101,39 +101,50 @@ extension CodeScannerView {
         }
 
         #if targetEnvironment(simulator)
-        override public func loadView() {
-            view = UIView()
-            view.isUserInteractionEnabled = true
+override public func loadView() {
+    view = UIView()
+    view.isUserInteractionEnabled = true
 
-            let label = UILabel()
-            label.translatesAutoresizingMaskIntoConstraints = false
-            label.numberOfLines = 0
-            label.text = "You're running in the simulator, which means the camera isn't available. Tap anywhere to send back some simulated data."
-            label.textAlignment = .center
+    // Create a blur effect
+    let blurEffect = UIBlurEffect(style: .dark)
+    let blurView = UIVisualEffectView(effect: blurEffect)
+    blurView.translatesAutoresizingMaskIntoConstraints = false
 
-            let button = UIButton()
-            button.translatesAutoresizingMaskIntoConstraints = false
-            button.setTitle("Select a custom image", for: .normal)
-            button.setTitleColor(UIColor.systemBlue, for: .normal)
-            button.setTitleColor(UIColor.gray, for: .highlighted)
-            button.addTarget(self, action: #selector(openGalleryFromButton), for: .touchUpInside)
+    let label = UILabel()
+    label.translatesAutoresizingMaskIntoConstraints = false
+    label.numberOfLines = 0
+    label.text = "You're running in the simulator, which means the camera isn't available. Tap anywhere to send back some simulated data."
+    label.textAlignment = .center
 
-            let stackView = UIStackView()
-            stackView.translatesAutoresizingMaskIntoConstraints = false
-            stackView.axis = .vertical
-            stackView.spacing = 50
-            stackView.addArrangedSubview(label)
-            stackView.addArrangedSubview(button)
+    let button = UIButton()
+    button.translatesAutoresizingMaskIntoConstraints = false
+    button.setTitle("Select a custom image", for: .normal)
+    button.setTitleColor(UIColor.systemBlue, for: .normal)
+    button.setTitleColor(UIColor.gray, for: .highlighted)
+    button.addTarget(self, action: #selector(openGalleryFromButton), for: .touchUpInside)
 
-            view.addSubview(stackView)
+    let stackView = UIStackView()
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.axis = .vertical
+    stackView.spacing = 50
+    stackView.addArrangedSubview(label)
+    stackView.addArrangedSubview(button)
 
-            NSLayoutConstraint.activate([
-                button.heightAnchor.constraint(equalToConstant: 50),
-                stackView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-                stackView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-                stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-            ])
-        }
+    view.addSubview(blurView) // Add the blur view as the background
+    view.addSubview(stackView)
+
+    NSLayoutConstraint.activate([
+        blurView.topAnchor.constraint(equalTo: view.topAnchor),
+        blurView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        blurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        
+        button.heightAnchor.constraint(equalToConstant: 50),
+        stackView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+        stackView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+        stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+    ])
+}
 
         override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             // Send back their simulated data, as if it was one of the types they were scanning for
